@@ -22,7 +22,9 @@ cd mortal_agent
 # Run agent with observer UI
 python -m cli.main run --demo-pages
 
-# Open http://127.0.0.1:8080 — use the CHAT panel to talk to the agent (same entity; needs ANTHROPIC_API_KEY or OPENAI_API_KEY in .env)
+# Open http://127.0.0.1:8080 — use the CHAT panel to talk to the agent.
+# LLM: Ollama (llama3.2:1b) first, then Claude and other cloud fallbacks. Run: ollama pull llama3.2:1b. See docs/OLLAMA_WINDOWS.md.
+# Legacy: ANTHROPIC_API_KEY or OPENAI_API_KEY in .env for cloud providers.
 
 # Test death (in another terminal)
 python -m cli.main kill-gate power
@@ -57,6 +59,18 @@ The agent’s system prompt is built from identity + **source context** loaded o
 - **Downloads docx** — `theology.docx`, `surgents file .docx`, `closed loop code open world.docx`, `LOCKED ROOM RIGHT impact.docx` (or similar names under `C:\Users\<you>\Downloads`)
 
 Total source text is capped so it fits in the LLM system context.
+
+## Ollama on Windows (install to D:)
+
+The agent uses **Ollama** for the LLM by default. To install Ollama on D: and run the agent:
+
+1. **Download and install to D:**  
+   From PowerShell: `cd mortal_agent` then `.\scripts\install_ollama_to_d.ps1`
+2. **Start Ollama** (new terminal): `ollama serve`
+3. **Pull the model:** `ollama pull llama3.2:1b`
+4. **Run agent** from repo root: `cd D:\agent` then `python -m cli run --observer`
+
+Full steps and troubleshooting: **[docs/OLLAMA_WINDOWS.md](docs/OLLAMA_WINDOWS.md)**.
 
 ## Chat and network
 

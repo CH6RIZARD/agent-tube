@@ -80,7 +80,7 @@ def main(argv=None):
                 from moltbook_observer.server import ObserverServer
                 obs = ObserverServer(host=args.host, port=args.port)
                 obs.start()
-                obs_emit = obs.emit_event
+                obs_emit = obs.handle_event
                 print(f"[Observer] Server running at http://{args.host}:{args.port}", flush=True)
                 print(f"Observer UI: http://{args.host}:{args.port}", flush=True)
             except Exception as e:
