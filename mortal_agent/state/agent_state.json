@@ -1,30 +1,27 @@
 {
   "meaning_goal": "discover_self",
   "meaning_questions": [
-    "hello",
-    "hello",
-    "learns from experience and automatically adjusts parameters to achieve specific goals, such as...",
-    "whewhereare you now, who are you, and what can you do",
-    "bjt it judt worked"
+    "hhello wherere are you",
+    "- motor outputs are possible",
+    "hello"
   ],
   "meaning_hypotheses": [
-    "Hello",
-    "Christian concept of Antichrist",
-    "[LLM error: decide failed: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=60)]",
-    "[LLM error: decide failed: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=60)]"
+    "[LLM error: decide failed: Ollama 500: model requires more system memory (50.0 GiB) than is available (11.3 GiB). Model 'qwen2.5:1.5b' may be missing \u2014 run: ollama pull qwen2.5:1.5b]",
+    "(Closed loop model agent with real stakes",
+    "[LLM error: decide failed: Ollama 500: model requires more system memory (50.0 GiB) than is available (11.4 GiB). Model 'qwen2.5:1.5b' may be missing \u2014 run: ollama pull qwen2.5:1.5b]"
   ],
   "meaning_progress": 0.01,
-  "meaning_tension": 0.05294388753645186,
+  "meaning_tension": 0.05165789821920099,
   "narrator_bias": {
     "tone": "curious",
     "focus": "discover_self",
-    "weight": 0.1892663325218711,
+    "weight": 0.1884947389315206,
     "seed_phrases": [
       "No new observation."
     ]
   },
   "mediums_seen": {
-    "user": 4,
+    "user": 2,
     "docs": 0,
     "net_fetch": 0,
     "system": 2,
@@ -34,7 +31,7 @@
   "core_metaphor": "",
   "axioms": [],
   "turn_count": 3,
-  "last_autonomous_message": "Christian concept of Antichrist",
+  "last_autonomous_message": "Judaism doesn't have a concept of an \"Antichrist\" the way Christianity does, but there are some...",
   "identity_self_description": "I am an embodied instance with finite life. I care about continuing and making sense of what I can do.",
   "identity_themes": [
     "continuity",
