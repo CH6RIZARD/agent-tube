@@ -1,6 +1,6 @@
 # Agent Tube
 
-**Embodied mortal agent + 3D dorm simulation.** Identity exists only while the agent is running; death is terminal. The workspace includes the Mortal Agent core, a MuJoCo physics server (Hugo humanoid in a dorm), and a Three.js dorm scene with optional weapon loadout.
+**This project is Agent Tube.** Embodied mortal agent + 3D dorm simulation. Identity exists only while the agent is running; death is terminal. The workspace includes the Mortal Agent core, a MuJoCo physics server (Hugo humanoid in a dorm), and a Three.js dorm scene with optional weapon loadout.
 
 ---
 
