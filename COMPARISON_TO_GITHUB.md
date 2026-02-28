@@ -1,29 +1,29 @@
-# Comparison: This Version vs GitHub (Yesterday’s Commits)
+# Comparison: This Version vs GitHub (Agent Tube)
 
 ## Summary
 
-- **GitHub (origin/main):** `ea6f0814` — **"Digital entity 101"**
+- **GitHub (origin/main):** `ea6f0814` (legacy commit message)
 - **Your current version:** 1 local commit ahead of GitHub + uncommitted changes.
 
-There were **no commits dated Feb 10** in your local log; the history jumps from **~Feb 6** (“mortal agent, keep going”) to **Feb 11** (“Needs heavy patching”, “Digital entity 101”, “digital entity 1002”). So “yesterday’s GitHub commits” is treated as **what’s currently on GitHub**: `origin/main` at `ea6f0814`.
+**This project is Agent Tube.** Historical commit messages in the log may still say “Digital entity 101” / “digital entity 1002”; those are old labels, not the project name. What’s on GitHub is `origin/main` at `ea6f0814`.
 
 ---
 
 ## Commits on GitHub (origin/main)
 
-| Hash      | Message            |
-|-----------|--------------------|
-| `ea6f0814` | Digital entity 101 |
+| Hash      | Message (legacy label) |
+|-----------|-------------------------|
+| `ea6f0814` | (was: Digital entity 101) |
 
 ---
 
 ## Your Local Commits Not on GitHub (ahead by 1)
 
-| Hash      | Message             |
-|-----------|---------------------|
-| `175ae4bd` | digital entity 1002 |
+| Hash      | Message (legacy label) |
+|-----------|-------------------------|
+| `175ae4bd` | (was: digital entity 1002) |
 
-So **this version** adds one commit on top of GitHub: **"digital entity 1002"**.
+So **this version** adds one commit on top of GitHub.
 
 ---
 
@@ -40,8 +40,8 @@ In that file, the only difference from the last commit is in **`mediums_seen`**:
 
 - **1770338056** (~Feb 6): `dc9323bc` — mortal agent, keep going  
 - **1770779193** (Feb 11): `a6df0cdf` — Needs heavy patching  
-- **1770782597** (Feb 11): `ea6f0814` — Digital entity 101 ← **origin/main**  
-- **1770793945** (Feb 11): `175ae4bd` — digital entity 1002 ← **HEAD**
+- **1770782597** (Feb 11): `ea6f0814` ← **origin/main**  
+- **1770793945** (Feb 11): `175ae4bd` ← **HEAD**
 
 ---
 
@@ -49,7 +49,7 @@ In that file, the only difference from the last commit is in **`mediums_seen`**:
 
 | Baseline (GitHub) | This version |
 |-------------------|--------------|
-| `ea6f0814` Digital entity 101 | Same + **1 commit** (`175ae4bd` digital entity 1002) + **1 file changed** (`mortal_agent/state/agent_state.json`: `web_search` 14→15) |
+| `ea6f0814` (GitHub) | Same + **1 commit** (`175ae4bd`) + **1 file changed** (`mortal_agent/state/agent_state.json`: `web_search` 14→15) |
 
 To see the full line-by-line diff in your repo, run:
 

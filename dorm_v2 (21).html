@@ -1103,8 +1103,13 @@ loadTHREE(function(){
     pos.z=Math.max(rMinZ,Math.min(rMaxZ,pos.z));
   }
 
+  // A-pose offset: Rigify rest pose is T-pose (arms out). Add this to arm rotations so that
+  // "0" from MuJoCo = arms down (A-pose), not stiff T-pose. Applied only in physics mode.
+  const REST_POSE_ARM_X = -Math.PI/2;
+
   // ═══ MUJOCO IS THE SINGLE SOURCE OF TRUTH FOR HUGO WHEN CONNECTED ═══
-  // Hugo stays hidden until the first physics frame is applied — so you never see T-pose, only physics (fall/move).
+  // No "Lay on bed" key, no hardcoded pose. Hugo stays hidden until first physics frame; then ONLY this
+  // function updates position, quaternion, and bones. Body lay/dangle comes from real-time physics only.
   // When _mjReady is true, ONLY this function updates hugoRoot.position, hugoRoot.quaternion,
   // and leg/arm bone rotations (unless window._mjBoneTest is on — then runBoneTest() drives legs).
   // Server sends: pos, quat, lhip[3], lknee, lankle, rhip[3], rknee, rankle. We normalize lhip/rhip to lhip_x etc.
@@ -1115,7 +1120,7 @@ loadTHREE(function(){
         console.warn('[MuJoCo] physics arriving but hugoRoot=null. Load Hugo.glb first.');}
       return;
     }
-    if(!hugoRoot.visible){ hugoRoot.visible=true; show('Physics driving Hugo — no T-pose.'); }
+    if(!hugoRoot.visible){ hugoRoot.visible=true; show('Real-time physics only — Hugo pose from sim (lay/dangle from physics).'); }
     // Log incoming keys every 120 frames to diagnose server format
     if(!window._mjKeyLog) window._mjKeyLog=0;
     window._mjKeyLog++;
@@ -1153,7 +1158,7 @@ loadTHREE(function(){
       if(!_hugoTargetValid){ hugoRoot.position.copy(_hugoTargetPos); _hugoTargetValid=true; }
     }
 
-    // Root quaternion — target for smooth slerp
+    // Root quaternion — physics only; smooth slerp to MuJoCo quat
     if(s.quat){
       const[qw,qx,qy,qz]=s.quat;
       _mjQ.set(qx,qz,-qy,qw);
@@ -1187,20 +1192,20 @@ loadTHREE(function(){
     const sp=bk('spine');if(sp)sp.rotation.z=pz*0.05;
     const sp2=bk('spine1');if(sp2)sp2.rotation.z=pz*0.03;
 
-    // Arms — use server joint data when present so limbs move individually; else counter-swing from legs
+    // Arms — use server joint data when present; add REST_POSE_ARM_X so 0 = arms down (A-pose), not T-pose
     const lua=bk('luarm'),rua=bk('ruarm'),lfarm=bk('lfarm'),rfarm=bk('rfarm');
     const luaArr=Array.isArray(s.lua)?s.lua:null;const ruaArr=Array.isArray(s.rua)?s.rua:null;
     if(lua){
       if(luaArr||s.lshoulder_x!==undefined||s.lua_x!==undefined){
         const luaRot=luaArr||[s.lshoulder_x||s.lua_x||0,s.lshoulder_y||s.lua_y||0,s.lshoulder_z||s.lua_z||0];
-        lua.rotation.x=luaRot[0];lua.rotation.y=luaRot[1]!==undefined?luaRot[1]:lua.rotation.y;lua.rotation.z=luaRot[2]!==undefined?luaRot[2]:-0.3;
-      }else{lua.rotation.x=-lhip[0]*0.4;lua.rotation.z=-0.3;}
+        lua.rotation.x=(luaRot[0]||0)+REST_POSE_ARM_X;lua.rotation.y=luaRot[1]!==undefined?luaRot[1]:lua.rotation.y;lua.rotation.z=luaRot[2]!==undefined?luaRot[2]:-0.3;
+      }else{lua.rotation.x=REST_POSE_ARM_X-lhip[0]*0.4;lua.rotation.z=-0.3;}
     }
     if(rua){
       if(ruaArr||s.rshoulder_x!==undefined||s.rua_x!==undefined){
         const ruaRot=ruaArr||[s.rshoulder_x||s.rua_x||0,s.rshoulder_y||s.rua_y||0,s.rshoulder_z||s.rua_z||0];
-        rua.rotation.x=ruaRot[0];rua.rotation.y=ruaRot[1]!==undefined?ruaRot[1]:rua.rotation.y;rua.rotation.z=ruaRot[2]!==undefined?ruaRot[2]:0.3;
-      }else{rua.rotation.x=-rhip[0]*0.4;rua.rotation.z=0.3;}
+        rua.rotation.x=(ruaRot[0]||0)+REST_POSE_ARM_X;rua.rotation.y=ruaRot[1]!==undefined?ruaRot[1]:rua.rotation.y;rua.rotation.z=ruaRot[2]!==undefined?ruaRot[2]:0.3;
+      }else{rua.rotation.x=REST_POSE_ARM_X-rhip[0]*0.4;rua.rotation.z=0.3;}
     }
     if(lfarm&&s.lelbow!==undefined)lfarm.rotation.x=s.lelbow;
     if(rfarm&&s.relbow!==undefined)rfarm.rotation.x=s.relbow;
@@ -1858,7 +1863,7 @@ loadTHREE(function(){
     const camBobY=Math.sin(_bobPhase)*bobAmt;
     const camBobX=Math.sin(_bobPhase*.5)*bobAmt*.28;
 
-    if(hugoRoot){hugoRoot.visible=true;}
+    // Hugo visibility: ONLY when physics has driven him (first frame from MuJoCo). No hardcoded pose, no T-pose.
     if(hugoProxy){hugoProxy.visible=!hugoRoot;}
 
     // Hugo is an INDEPENDENT AGENT — not attached to Chaze's position
@@ -1989,7 +1994,8 @@ loadTHREE(function(){
     <span style="opacity:.7">V</span> 3P/FP &nbsp;
     <span style="opacity:.7">E</span> interact &nbsp;
     <span style="opacity:.7">R</span> reset &nbsp;
-    <span style="opacity:.7">H</span> Hugo HUD<br>
+    <span style="opacity:.7">H</span> Hugo HUD &nbsp;
+    <span style="opacity:.7">Shift+T</span> bone test<br>
     <span style="opacity:.45;font-size:10px">Right-drag look • Left-click fire • Shoot Hugo for damage</span>`;
 
   // ── Loadout weapon icon bar ────────────────────────────────────────────────

@@ -104,9 +104,30 @@ XML = """
 model = mujoco.MjModel.from_xml_string(XML)
 data  = mujoco.MjData(model)
 
-# Add small perturbation so it falls interestingly
-data.qvel[3] = 0.3
-data.qvel[5] = 0.2
+# Spawn lying ON the bed; only real-time physics drives pose (no hardcoded "lay" mode).
+# Bed right center (2.3, 0, 0.15), top ~ 0.28. Root on bed, quat = lying on back (90° around Y).
+# Joints set to relaxed lie; then ctrl=0 so gravity + contacts make him settle/dangle in real time.
+def set_lying_on_bed(d):
+    d.qpos[0] = 2.3
+    d.qpos[1] = 0.0
+    d.qpos[2] = 0.35  # just above bed top
+    # quat (w,x,y,z): 90° around Y = lying on back along X
+    d.qpos[3] = 0.70710678  # w
+    d.qpos[4] = 0.0
+    d.qpos[5] = 0.70710678  # y
+    d.qpos[6] = 0.0
+    # relaxed legs (thighs up a bit, knees bent) so physics can settle/dangle
+    if d.qpos.size >= 11:
+        d.qpos[7:10] = [0.7, 0.0, 0.0]   # lhip_x,y,z
+        d.qpos[10] = -0.8                # lknee
+        d.qpos[11] = 0.0                 # lankle
+    if d.qpos.size >= 17:
+        d.qpos[12:15] = [0.7, 0.0, 0.0]  # rhip
+        d.qpos[15] = -0.8                # rknee
+        d.qpos[16] = 0.0                 # rankle
+    d.qvel[:] = 0.0  # no initial spin; physics will move him
+
+set_lying_on_bed(data)
 
 clients = set()
 
@@ -145,8 +166,7 @@ async def handler(ws):
 
 async def physics_loop():
     mujoco.mj_resetData(model, data)
-    data.qvel[3] = 0.3
-    data.qvel[5] = 0.2
+    set_lying_on_bed(data)  # spawn on bed; real-time physics only (no hardcoded pose)
     step = 0
     # Cache joint / actuator indices for fast access
     def jadr(name: str):
@@ -223,24 +243,27 @@ async def physics_loop():
             "rankle":  0.12 * amp * max(0.0, -swing2),
         }
 
-        # PD compute torques
+        # PD compute torques (only when walking — when speed=0, zero ctrl so physics drives pose: lay/dangle on bed)
         def pd(name: str, kp: float, kd: float):
             q, qd = getq(name)
             return kp * (tgt[name] - q) - kd * qd
 
-        # Apply to actuators (by actuator id)
-        # hips
-        setctrl(act_ids[0], pd("lhip_x", KP_HIP, KD_HIP))
-        setctrl(act_ids[1], pd("lhip_y", KP_HIP, KD_HIP))
-        setctrl(act_ids[2], pd("lhip_z", KP_HIP, KD_HIP))
-        setctrl(act_ids[3], pd("rhip_x", KP_HIP, KD_HIP))
-        setctrl(act_ids[4], pd("rhip_y", KP_HIP, KD_HIP))
-        setctrl(act_ids[5], pd("rhip_z", KP_HIP, KD_HIP))
-        # knees/ankles
-        setctrl(act_ids[6], pd("lknee",  KP_KNEE, KD_KNEE))
-        setctrl(act_ids[7], pd("lankle", KP_ANK,  KD_ANK))
-        setctrl(act_ids[8], pd("rknee",  KP_KNEE, KD_KNEE))
-        setctrl(act_ids[9], pd("rankle", KP_ANK,  KD_ANK))
+        if spd > 0.0:
+            # Apply to actuators (by actuator id) — walking only
+            setctrl(act_ids[0], pd("lhip_x", KP_HIP, KD_HIP))
+            setctrl(act_ids[1], pd("lhip_y", KP_HIP, KD_HIP))
+            setctrl(act_ids[2], pd("lhip_z", KP_HIP, KD_HIP))
+            setctrl(act_ids[3], pd("rhip_x", KP_HIP, KD_HIP))
+            setctrl(act_ids[4], pd("rhip_y", KP_HIP, KD_HIP))
+            setctrl(act_ids[5], pd("rhip_z", KP_HIP, KD_HIP))
+            setctrl(act_ids[6], pd("lknee",  KP_KNEE, KD_KNEE))
+            setctrl(act_ids[7], pd("lankle", KP_ANK,  KD_ANK))
+            setctrl(act_ids[8], pd("rknee",  KP_KNEE, KD_KNEE))
+            setctrl(act_ids[9], pd("rankle", KP_ANK,  KD_ANK))
+        else:
+            # Real-time physics only: zero actuation so gravity + contacts drive pose (lay/dangle on bed)
+            for i in act_ids:
+                data.ctrl[i] = 0.0
 
         for _ in range(4):
             mujoco.mj_step(model, data)

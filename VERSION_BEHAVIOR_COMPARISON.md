@@ -1,8 +1,9 @@
-# Version behavior comparison: GitHub vs current (digital entity 1002)
+# Version behavior comparison: GitHub vs current (Agent Tube)
 
-**Current commit (local only):** `175ae4bd` – "digital entity 1002"  
-**On GitHub:** `ea6f0814` – "Digital entity 101"  
-So **175ae4bd should be pushed** if you want GitHub and the running agent to match.
+**This project is Agent Tube.**  
+**Current commit (local only):** `175ae4bd`  
+**On GitHub:** `ea6f0814`  
+Push **175ae4bd** if you want GitHub and the running agent to match.
 
 ---
 
@@ -12,8 +13,8 @@ So **175ae4bd should be pushed** if you want GitHub and the running agent to mat
 |--------|--------|-------------------|
 | **dc9323bc** | mortal agent, keep going (Feb 5) | Baseline: autonomy ticks, intent loop, identity; no speech gate, no presence, simpler GitHub posting. |
 | **a6df0cdf** | Needs heavy patching (Feb 10) | Big feature set: autonomy overhaul, speech gate, presence, narrator, GitHub scripts, LLM router changes, much larger `mortal_agent.py`. |
-| **ea6f0814** | Digital entity 101 (Feb 10) — **on GitHub** | Autonomy gets full context (meaning_state, birth_tick, death_at); GitHub posts are first-person ontological reflections; agent state shifts toward “consolidate” and lived tension. |
-| **175ae4bd** | digital entity 1002 (Feb 11) — **current / what agent runs** | **Recent web searches in narrator state**: last N searches + retained snippets are in context so the agent’s thoughts and actions are informed by what it just searched; script to fix GitHub issue #19. |
+| **ea6f0814** | (Feb 10) — **on GitHub** | Autonomy gets full context (meaning_state, birth_tick, death_at); GitHub posts are first-person ontological reflections; agent state shifts toward “consolidate” and lived tension. |
+| **175ae4bd** | (Feb 11) — **current / what agent runs** | **Recent web searches in narrator state**: last N searches + retained snippets are in context so the agent’s thoughts and actions are informed by what it just searched; script to fix GitHub issue #19. |
 
 ---
 
@@ -40,13 +41,13 @@ So **behavioral** difference between 101 and 1002 is: **1002 uses recent web sea
 
 ---
 
-## 2. “Needs heavy patching” (a6df0cdf) vs “Digital entity 101” (ea6f0814)
+## 2. “Needs heavy patching” (a6df0cdf) vs ea6f0814
 
 - **Autonomy:** 101 passes `meaning_state`, `birth_tick`, and `death_at` into `generate_internal_proposals()`, so internal proposals can depend on current meaning state and lifetime.
 - **Intent loop / GitHub posts:** 101 changes `_build_github_post_payload()` so internal reflections are **first-person, ontological narrative** (goal as “lived condition”, tension as “friction or low hum”, core metaphor, last questions/hypotheses, last_wander_text, closing line “—Finite, embodied, in the middle of the inquiry”) instead of a short bullet list. Title becomes a philosophical fragment (e.g. from core metaphor or last hypothesis) instead of “Reflection: {goal}”.
 - **Mortal agent:** 101 adds the small hooks and state needed for the above; 1002 then adds `_recent_web_searches` and the narrator recap on top of that.
 
-So **101** behaves as a more “lived” digital entity: **better context in autonomy, and GitHub posts as first-person reflections.** **1002** keeps that and adds **recent-search-aware narrator behavior.**
+So **ea6f0814** has better context in autonomy and GitHub posts as first-person reflections; **175ae4bd** adds **recent-search-aware narrator behavior** on top.
 
 ---
 
@@ -64,7 +65,7 @@ So **101** behaves as a more “lived” digital entity: **better context in aut
    ```bash
    git push origin main
    ```
-2. After that, **origin/main** will be at “digital entity 1002” and behavior on GitHub will match the running agent (including recent web searches in narrator state and the updated agent_state.json once that’s committed if you choose to).
+2. After that, **origin/main** will be at 175ae4bd and behavior on GitHub will match the running agent (including recent web searches in narrator state and the updated agent_state.json once that’s committed if you choose to).
 
 ---
 
@@ -73,4 +74,4 @@ So **101** behaves as a more “lived” digital entity: **better context in aut
 - **dc9323bc:** Autonomy and intent loop with simpler state and GitHub posts; no speech gate, no presence, no recent-search recap.
 - **a6df0cdf:** Full “heavy patching” stack (speech gate, presence, narrator, GitHub scripts, etc.); autonomy and GitHub post content still in the older style.
 - **ea6f0814 (GitHub now):** Same stack + autonomy with meaning/lifetime context + GitHub posts as first-person ontological reflections; **no** recent web searches in narrator.
-- **175ae4bd (current / running agent):** Same as 101 + **recent web searches (and retained snippets) in narrator state**, so the agent’s behavior is explicitly informed by what it just searched; plus one-off script to fix issue #19.
+- **175ae4bd (current / running agent):** Same as ea6f0814 + **recent web searches (and retained snippets) in narrator state**, so the agent’s behavior is explicitly informed by what it just searched; plus one-off script to fix issue #19.
